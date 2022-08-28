@@ -1,0 +1,1 @@
+This is a simple banking application with a sql database written in C#. This is Project 0.
