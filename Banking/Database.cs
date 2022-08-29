@@ -184,28 +184,72 @@ namespace Banking
         }
 
         // transfer funds
+        public void transferFunds(int source, int destination)
+        {
+            // create transaction and update balances
 
+
+        }
 
         // search accounts
+        public string searchAccounts()
+        {
+            //wrapper for getUserAccountInfo I guess?
 
+            return "";
+        }
 
         // accounts list
+        public string[] accountsList()
+        {
+            //even bigger wrapper for getUserAccountInfo? 
+            //sounds like a job for tomorrow
 
+
+            return new string[0];
+        }
 
         // summarize accounts
+        public string summarizeAccounts()
+        {
+            //return back the total statements we need to get displayed
 
+            return "";
+        }
 
         // view account
+        public string viewAccount(int usrNo)
+        {
+            // yet another wrapper for getUserAccountInfo?? Should be easy at
+            // least hopefully, if even needed at all
+
+
+            return "";
+        }
 
 
         // withdraw
+        public void withdraw(int sourceAccNo, double transAmount)
+        {
+            // sql updates to make a transaction, then update the ACCOUNTS table balance
+
+
+        }
 
 
         // deposit
+        public void deposit(int destinationAccNo, double transAmount)
+        {
+            // same as withdraw just positive instead of negative
 
+
+        }
 
         // change password
-
+        public void changePassword(int usrNo)
+        {
+            // a simple update of the password
+        }
 
         // view account last 5 transactions
 
