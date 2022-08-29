@@ -345,7 +345,7 @@ namespace Banking
             //sounds like a job for tomorrow
             sqlCon.Open();
             SqlCommand cmd = new SqlCommand(
-                $"select top {Console.WindowHeight-11} * from USERS",
+                $"select * from USERS",
                 sqlCon);
             SqlDataReader reader = cmd.ExecuteReader();
             string[] results = new string[] { "User # |   Account Name    |   Username   |    SSN    |         Email         |Phone Number|Admin",

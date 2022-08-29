@@ -456,7 +456,21 @@ void adminMenu()
                 break;
             case 5:
                 // list accounts
-
+                try
+                {
+                    string[] accountsFound = db.accountsList();
+                    ConsoleMenu searchResults = new ConsoleMenu("Search Results",
+                        accountsFound,
+                        "Press Up/Down to look at other pages or any other key to exit.",
+                        ConsoleColor.Cyan,
+                        ConsoleColor.Black, 4);
+                    searchResults.ShowInfo(4);
+                    continueAdminMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 6:
