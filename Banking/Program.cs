@@ -230,7 +230,7 @@ void adminMenu()
                     db.createAccount(accName, userName, passWord, ssn, email, phoneno,
                         accType, accBalance, (isAdmin == 1) ? true : false);
 
-                    string plural = (accType.Length > 1) ? " has been" : "s have been";
+                    string plural = (accType.Length == 1) ? " has been" : "s have been";
                     ConsoleMenu accCreated = new ConsoleMenu("Account Created",
                         new string[] { $"{accName}'s account{plural} successfully created." },
                         "Press any key to exit.",
@@ -248,7 +248,31 @@ void adminMenu()
                 break;
             case 1:
                 // delete account
+                // get user number of account to delete
+                ConsoleMenu askUsrNo = new ConsoleMenu("Delete an Account",
+                new string[] { "Please enter in the User Number of the account holder.",
+                "You can use search to find this if needed."},
+                "User Number: ",
+                ConsoleColor.Red,
+                ConsoleColor.Black);
+                int usrNo = Convert.ToInt32(askUsrNo.ShowPrompt());
 
+                try
+                {
+                    db.deleteAccount(usrNo);
+
+                    ConsoleMenu usrDeleted = new ConsoleMenu("Account Deleted",
+                        new string[] { $"User Number {usrNo} has been successfully deleted." },
+                        "Press any key to exit.",
+                        ConsoleColor.White,
+                        ConsoleColor.DarkRed);
+                    usrDeleted.ShowInfo();
+                    continueAdminMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 2:

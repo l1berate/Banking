@@ -61,3 +61,9 @@ select * from TRANSACTIONS
 select count(*) from TRANSACTIONS
 
 select count(*) from USERS where accUsername='admin' and accPassword='Admin@1234' and isAdmin=1
+
+select userNumber from USERS where accUsername='admin' and accPassword='Admin@1234'
+
+select top 10 * from TRANSACTIONS order by userNumber desc
+
+delete from USERS where userNumber=11002
