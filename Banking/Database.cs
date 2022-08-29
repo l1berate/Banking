@@ -84,7 +84,7 @@ namespace Banking
                     sqlCon);
                 cmd2.Parameters.AddWithValue("@usrNo", usrNo);
                 cmd2.Parameters.AddWithValue("@acct", acct);
-                cmd2.Parameters.AddWithValue("@accBal", accBalance[0]);
+                cmd2.Parameters.AddWithValue("@accBal", accBalance[Array.FindIndex(accType, m => m == acct)]);
                 cmd2.ExecuteScalar();
 
                 // get account number of newly created account for TRANSACTIONS table
@@ -101,7 +101,7 @@ namespace Banking
                     sqlCon);
                 cmd4.Parameters.AddWithValue("@accNo", accNo);
                 cmd4.Parameters.AddWithValue("@usrNo", usrNo);
-                cmd4.Parameters.AddWithValue("@accBal", accBalance[0]);
+                cmd4.Parameters.AddWithValue("@accBal", accBalance[Array.FindIndex(accType, m => m == acct)]);
                 cmd4.Parameters.AddWithValue("@transD", (acct == "Loan") ? "Loan Approved" : "Initial Deposit");
                 cmd4.ExecuteScalar();
             }
@@ -112,7 +112,24 @@ namespace Banking
         public void deleteAccount(int usrNo)
         {
             sqlCon.Open();
-            
+            SqlCommand cmd = new SqlCommand(
+                    "delete from TRANSACTIONS where userNumber=@usrNo",
+                    sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.ExecuteNonQuery();
+
+            SqlCommand cmd1 = new SqlCommand(
+                    "delete from ACCOUNTS where userNumber=@usrNo",
+                    sqlCon);
+            cmd1.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd1.ExecuteNonQuery();
+
+            SqlCommand cmd2 = new SqlCommand(
+                    "delete from USERS where userNumber=@usrNo",
+                    sqlCon);
+            cmd2.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd2.ExecuteNonQuery();
+
             sqlCon.Close();
         }
 

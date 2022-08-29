@@ -29,10 +29,15 @@ namespace Banking
         public int ShowMenu()
         {
             bool menuDone = true;
+            bool write = true;
             ConsoleKeyInfo key;
             do
             {
-                WriteMenu();
+                if (write)
+                {
+                    WriteMenu();
+                }
+                write = true;
                 key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.DownArrow)
@@ -42,6 +47,10 @@ namespace Banking
                         menuSelectorIndex++;
                         continue;
                     }
+                    else
+                    {
+                        write = false;
+                    }
                 }
                 else if (key.Key == ConsoleKey.UpArrow)
                 {
@@ -49,6 +58,10 @@ namespace Banking
                     {
                         menuSelectorIndex--;
                         continue;
+                    }
+                    else
+                    {
+                        write = false;
                     }
                 }
                 else if (key.Key == ConsoleKey.Enter)
@@ -72,8 +85,8 @@ namespace Banking
         {
             bool menuDone = true;
             ConsoleKeyInfo key;
-            string validInput = 
-                " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;\',./~!@#$%^&*()_+{}|:\"<>?";
+            string validInput =
+                "\'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;,./~!@#$%^&*()_+{}|:\"<>? ";
             if (infoTxt == "")
             {
                 infoTxt = "> ";
@@ -98,7 +111,21 @@ namespace Banking
                 else if (validInput.IndexOf(key.KeyChar.ToString()) > 0)
                 {
                     input += key.KeyChar.ToString();
-                    infoTxt += key.KeyChar.ToString();
+                    if (infoTxt.Length > 9)
+                    {
+                        if (infoTxt.Substring(0, 10) == "Password: ")
+                        {
+                            infoTxt += "*";
+                        }
+                        else
+                        {
+                            infoTxt += key.KeyChar.ToString();
+                        }
+                    }
+                    else
+                    {
+                        infoTxt += key.KeyChar.ToString();
+                    }
                 }
                 else
                 {

@@ -108,7 +108,11 @@ void customerLoginMenu()
 
 void adminMenu()
 {
-    ConsoleMenu adminMenu = new ConsoleMenu("Admin Menu",
+    bool continueAdminMenu = false;
+    do
+    {
+        continueAdminMenu = false;
+        ConsoleMenu adminMenu = new ConsoleMenu("Admin Menu",
         new string[] { "Create a new account",
                         "Delete an account",
                         "Edit account details",
@@ -120,35 +124,166 @@ void adminMenu()
         "Press Up/Down keys and then Enter to make a selection",
         ConsoleColor.White,
         ConsoleColor.Black);
-    int choice = adminMenu.ShowMenu();
+        int choice = adminMenu.ShowMenu();
 
-    switch (choice)
-    {
-        case 0:
-            
-            break;
-        case 1:
+        switch (choice)
+        {
+            case 0:
+                // create account
+                /* createAccount(string accName, string userName, string passWord, 
+                string ssn, string email, string phoneno, string[] accType, double[] accBalance,
+                bool isAdmin = false)*/
 
-            break;
-        case 2:
+                ConsoleMenu askName = new ConsoleMenu("Enter New Account's Information",
+                new string[] { "Please enter in the full name of the account holder." },
+                "Full Name: ",
+                ConsoleColor.White,
+                ConsoleColor.Green);
+                string accName = askName.ShowPrompt();
 
-            break;
-        case 3:
+                ConsoleMenu askUsername = new ConsoleMenu("Enter New Account's Information",
+                new string[] { "Please enter in the username of the account holder." },
+                "Username: ",
+                ConsoleColor.White,
+                ConsoleColor.Green);
+                string userName = askUsername.ShowPrompt();
 
-            break;
-        case 4:
+                ConsoleMenu askPassword = new ConsoleMenu("Enter New Account's Information",
+                new string[] { "Please enter in the password of the account holder." },
+                "Password: ",
+                ConsoleColor.White,
+                ConsoleColor.Green);
+                string passWord = askPassword.ShowPrompt();
 
-            break;
-        case 5:
-            
-            break;
-        case 6:
+                ConsoleMenu askSSN = new ConsoleMenu("Enter New Account's Information",
+                new string[] { "Please enter in the social security number of the account holder." },
+                "SSN: ",
+                ConsoleColor.White,
+                ConsoleColor.Green);
+                string ssn = askSSN.ShowPrompt();
 
-            break;
-        case 7:
-            mainMenu();
-            break;
-    }
+                ConsoleMenu askEmail = new ConsoleMenu("Enter New Account's Information",
+                new string[] { "Please enter in the email of the account holder." },
+                "Email: ",
+                ConsoleColor.White,
+                ConsoleColor.Green);
+                string email = askEmail.ShowPrompt();
+
+                ConsoleMenu askPhone = new ConsoleMenu("Enter New Account's Information",
+                new string[] { "Please enter in the phone number of the account holder." },
+                "Phone Number: ",
+                ConsoleColor.White,
+                ConsoleColor.Green);
+                string phoneno = askPhone.ShowPrompt();
+
+                ConsoleMenu accComboMenu = new ConsoleMenu("Choose which Accounts to Open",
+                    new string[] {"Checkings only",                 //case 0
+                              "Checkings & Savings",            //case 1
+                              "Checkings & Loan",               //case 2
+                              "Checkings, Savings, & Loan" },   //case 3
+                    "Press Up/Down keys and then Enter to choose; Every account must have a checkings.",
+                    ConsoleColor.White,
+                    ConsoleColor.Green);
+                int accCombo = accComboMenu.ShowMenu();
+
+                string[] accType = new string[0];
+                switch (accCombo)
+                {
+                    case 0:
+                        accType = accType.Concat(new string[] { "Checkings" }).ToArray();
+                        break;
+                    case 1:
+                        accType = accType.Concat(new string[] { "Checkings", "Savings" }).ToArray();
+                        break;
+                    case 2:
+                        accType = accType.Concat(new string[] { "Checkings", "Loan" }).ToArray();
+                        break;
+                    case 3:
+                        accType = accType.Concat(new string[] { "Checkings", "Savings", "Loan" }).ToArray();
+                        break;
+                }
+
+                double[] accBalance = new double[0];
+                ConsoleMenu askBalance;
+                foreach (string acct in accType)
+                {
+                    askBalance = new ConsoleMenu($"Enter {acct} Initial Balance",
+                        new string[] { $"Please enter in the starting balance of the {acct}." },
+                        "Balance: $",
+                        ConsoleColor.White,
+                        ConsoleColor.Green);
+                    double balance = Convert.ToDouble(askBalance.ShowPrompt());
+                    accBalance = accBalance.Concat(new double[] { balance }).ToArray();
+                }
+
+                ConsoleMenu askAdminMenu = new ConsoleMenu("Choose Account Privelage Level",
+                    new string[] {"Customer Privelages",                 //case 0
+                              "Administrator Privelages" },          //case 1
+                    "Press Up/Down keys and then Enter to make a selection",
+                    ConsoleColor.White,
+                    ConsoleColor.Green);
+                int isAdmin = askAdminMenu.ShowMenu();
+
+                try
+                {
+                    // call db.createAccount here and catch any sql related errors.
+                    db.createAccount(accName, userName, passWord, ssn, email, phoneno,
+                        accType, accBalance, (isAdmin == 1) ? true : false);
+
+                    string plural = (accType.Length > 1) ? " has been" : "s have been";
+                    ConsoleMenu accCreated = new ConsoleMenu("Account Created",
+                        new string[] { $"{accName}'s account{plural} successfully created." },
+                        "Press any key to exit.",
+                        ConsoleColor.DarkGreen,
+                        ConsoleColor.White);
+                    accCreated.ShowInfo();
+                    continueAdminMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
+
+
+                break;
+            case 1:
+                // delete account
+
+
+                break;
+            case 2:
+                // edit account
+
+
+                break;
+            case 3:
+                // transfer funds
+
+
+                break;
+            case 4:
+                // search accounts
+
+
+                break;
+            case 5:
+                // list accounts
+
+
+                break;
+            case 6:
+                // summarize accounts
+                // total accounts: XX total balances: XX
+                // Checkings: XX accounts | Savings: XX accounts | Loan: XX accounts
+
+
+                break;
+            case 7:
+                mainMenu();
+                break;
+        }
+    } while (continueAdminMenu);
+    
 }
 
 void customerMenu()
@@ -215,7 +350,7 @@ void dbError(Exception e)
             ConsoleColor.DarkYellow);
     // get date time and output it with e.Message to the error.log
     // summarize try catch statements and this new dbError function
-    File.AppendAllText("error.log", String.Concat(DateTime.Now.ToString("en-US"), " : ", e.Message));
+    File.AppendAllText("error.log", String.Concat(DateTime.Now.Kind, " : ", e.Message));
     dbError.ShowInfo();
     mainMenu();
 }
