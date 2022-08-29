@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Security.AccessControl;
 using System.Diagnostics;
 using System.Security.Principal;
+using System.Data.Common;
 
 namespace Banking
 {
@@ -174,9 +175,11 @@ namespace Banking
                         reader.GetString(4) + "|" + reader.GetString(5) + "|" +
                         reader.GetString(6) + "|" + bitValue;
                 }
+                reader.Close();
             }
             else
             {
+                reader.Close();
                 return "";
             }
             sqlCon.Close();
@@ -184,19 +187,171 @@ namespace Banking
         }
 
         // transfer funds
+<<<<<<< HEAD
         public void transferFunds(int source, int destination)
         {
             // create transaction and update balances
+=======
+        public void transferFunds(int source, int destination, double amount)
+        {
+            // create transaction and update balances
+            sqlCon.Open();
+>>>>>>> inprogress
 
+            // query source account to get user number and balance
+            SqlCommand cmd = new SqlCommand(
+                "select userNumber, accBalance from ACCOUNTS where accNumber=@source",
+                sqlCon);
+            cmd.Parameters.AddWithValue("@source", source);
+            SqlDataReader reader = cmd.ExecuteReader();
+            int usrNoS = 0;
+            double oldBalanceS = 0.0;
+            if (reader.HasRows)
+            {
+                reader.Read();
+                usrNoS = reader.GetInt32(0);
+                oldBalanceS = (double)reader.GetDecimal(1);
+            }
+            reader.Close();
+
+            // query destination account to get user number and balance
+            SqlCommand cmd1 = new SqlCommand(
+                "select userNumber, accBalance from ACCOUNTS where accNumber=@destination",
+                sqlCon);
+            cmd1.Parameters.AddWithValue("@destination", destination);
+            SqlDataReader reader1 = cmd1.ExecuteReader();
+            int usrNoD = 0;
+            double oldBalanceD = 0.0;
+            
+            if (reader1.HasRows)
+            {
+                reader1.Read();
+                usrNoD = reader1.GetInt32(0);
+                oldBalanceD = (double)reader1.GetDecimal(1);
+            }
+            reader1.Close();
+            
+            // add the transaction to the source account
+            SqlCommand cmd2 = new SqlCommand(
+                "insert into TRANSACTIONS (accNumber, userNumber, transAmount, transDescription) values (@source, @usrNoS, @newBalance, @transD)",
+                    sqlCon);
+            cmd2.Parameters.AddWithValue("@source", source);
+            cmd2.Parameters.AddWithValue("@usrNoS", usrNoS);
+            cmd2.Parameters.AddWithValue("@newBalance", Math.Round(-1 * amount, 2));
+            cmd2.Parameters.AddWithValue("@transD", $"Transfer to {destination}");
+            cmd2.ExecuteScalar();
+
+            // add the transaction to the destination
+            SqlCommand cmd3 = new SqlCommand(
+                "insert into TRANSACTIONS (accNumber, userNumber, transAmount, transDescription) values (@destination, @usrNoD, @newBalance, @transD)",
+                    sqlCon);
+            cmd3.Parameters.AddWithValue("@destination", destination);
+            cmd3.Parameters.AddWithValue("@usrNoD", usrNoD);
+            cmd3.Parameters.AddWithValue("@newBalance", Math.Round(amount, 2));
+            cmd3.Parameters.AddWithValue("@transD", $"Transfer from {source}");
+            cmd3.ExecuteScalar();
+
+            //update source balance in ACCOUNTS
+            SqlCommand cmd4 = new SqlCommand(
+                "update ACCOUNTS set accBalance=@newBalance where accNumber=@source",
+                sqlCon);
+            cmd4.Parameters.AddWithValue("@newBalance", Math.Round(oldBalanceS - amount, 2));
+            cmd4.Parameters.AddWithValue("@source", source);
+            cmd4.ExecuteNonQuery();
+
+            //update destination balance in ACCOUNTS
+            SqlCommand cmd5 = new SqlCommand(
+                "update ACCOUNTS set accBalance=@newBalance where accNumber=@destination",
+                sqlCon);
+            cmd5.Parameters.AddWithValue("@newBalance", Math.Round(oldBalanceD + amount, 2));
+            cmd5.Parameters.AddWithValue("@destination", destination);
+            cmd5.ExecuteNonQuery();
+
+            sqlCon.Close();
+        }
 
         }
 
         // search accounts
+<<<<<<< HEAD
         public string searchAccounts()
         {
             //wrapper for getUserAccountInfo I guess?
 
             return "";
+=======
+        public string[] searchAccounts(string searchMe, int column)
+        {
+            // search USERS where columns[column] like @searchMe
+            sqlCon.Open();
+            string[] columns = new string[] { 
+                "userNumber",
+                "accName",
+                "accUsername",
+                "accSSN",
+                "accEmail",
+                "accPhone",
+                "isAdmin"};
+            SqlCommand cmd = new SqlCommand(
+                $"select * from USERS where {columns[column]} like '%{searchMe}%'", 
+                sqlCon);
+            //cmd.Parameters.AddWithValue("@searchMe", searchMe);
+            SqlDataReader reader = cmd.ExecuteReader();
+            string[] results = new string[] { "User # |   Account Name    |   Username   |    SSN    |         Email         |Phone Number|Admin",
+                                              "-------|-------------------|--------------|-----------|-----------------------|------------|-----"};
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //accType = accType.Concat(new string[] { "Checkings" }).ToArray();
+                    string admin = reader.GetBoolean(7) ? "true" : "false";
+                    string[] resultsArray = 
+                        new string[] { $"{reader.GetInt32(0)}",
+                                       $"{reader.GetString(1)}",
+                                       $"{reader.GetString(2)}",
+                                       $"{reader.GetString(4)}",
+                                       $"{reader.GetString(5)}",
+                                       $"{reader.GetString(6)}",
+                                       $"{admin}" };
+                    string resultString = "";
+                    int i = 0;
+                    foreach (string res in results[0].Split("|"))
+                    {
+                        if (res.Length < resultsArray[i].Length)
+                        {
+                            resultString += String.Concat(resultsArray[i].Substring(0,res.Length-2), "..");
+                            if (i < resultsArray.Length-1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length == resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length > resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            resultString += String.Concat(Enumerable.Repeat(" ", res.Length - resultsArray[i].Length));
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        i++;
+                    }
+                    results = results.Concat(new string[] { 
+                        resultString }).ToArray();
+                }
+            }
+            reader.Close();
+            sqlCon.Close();
+            return results.Length > 2 ? results : new string[] { "No accounts found." };
+>>>>>>> inprogress
         }
 
         // accounts list
@@ -204,7 +359,70 @@ namespace Banking
         {
             //even bigger wrapper for getUserAccountInfo? 
             //sounds like a job for tomorrow
+<<<<<<< HEAD
 
+=======
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                $"select * from USERS",
+                sqlCon);
+            SqlDataReader reader = cmd.ExecuteReader();
+            string[] results = new string[] { "User # |   Account Name    |   Username   |    SSN    |         Email         |Phone Number|Admin",
+                                              "-------|-------------------|--------------|-----------|-----------------------|------------|-----"};
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //accType = accType.Concat(new string[] { "Checkings" }).ToArray();
+                    string admin = reader.GetBoolean(7) ? "true" : "false";
+                    string[] resultsArray =
+                        new string[] { $"{reader.GetInt32(0)}",
+                                       $"{reader.GetString(1)}",
+                                       $"{reader.GetString(2)}",
+                                       $"{reader.GetString(4)}",
+                                       $"{reader.GetString(5)}",
+                                       $"{reader.GetString(6)}",
+                                       $"{admin}" };
+                    string resultString = "";
+                    int i = 0;
+                    foreach (string res in results[0].Split("|"))
+                    {
+                        if (res.Length < resultsArray[i].Length)
+                        {
+                            resultString += String.Concat(resultsArray[i].Substring(0, res.Length - 2), "..");
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length == resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length > resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            resultString += String.Concat(Enumerable.Repeat(" ", res.Length - resultsArray[i].Length));
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        i++;
+                    }
+                    results = results.Concat(new string[] {
+                        resultString }).ToArray();
+                }
+            }
+            reader.Close();
+            sqlCon.Close();
+            return results.Length > 1 ? results : new string[] { "No accounts found." };
+        }
+>>>>>>> inprogress
 
             return new string[0];
         }
@@ -213,7 +431,15 @@ namespace Banking
         public string summarizeAccounts()
         {
             //return back the total statements we need to get displayed
+<<<<<<< HEAD
+=======
+            sqlCon.Open();
+>>>>>>> inprogress
 
+            return "";
+        }
+
+            sqlCon.Close();
             return "";
         }
 
@@ -222,8 +448,16 @@ namespace Banking
         {
             // yet another wrapper for getUserAccountInfo?? Should be easy at
             // least hopefully, if even needed at all
+<<<<<<< HEAD
 
 
+=======
+            sqlCon.Open();
+
+
+            sqlCon.Close();
+
+>>>>>>> inprogress
             return "";
         }
 
@@ -232,8 +466,16 @@ namespace Banking
         public void withdraw(int sourceAccNo, double transAmount)
         {
             // sql updates to make a transaction, then update the ACCOUNTS table balance
+<<<<<<< HEAD
 
 
+=======
+            sqlCon.Open();
+
+
+            sqlCon.Close();
+
+>>>>>>> inprogress
         }
 
 
@@ -241,6 +483,7 @@ namespace Banking
         public void deposit(int destinationAccNo, double transAmount)
         {
             // same as withdraw just positive instead of negative
+<<<<<<< HEAD
 
 
         }
@@ -249,6 +492,28 @@ namespace Banking
         public void changePassword(int usrNo)
         {
             // a simple update of the password
+=======
+            sqlCon.Open();
+
+
+            sqlCon.Close();
+
+        }
+
+        // change password
+        public void changePassword(int usrNo, string newPassword)
+        {
+            // a simple update of the password
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                "update USERS set accPassword=@newPassword where userNumber=@usrNo", 
+                sqlCon);
+            cmd.Parameters.AddWithValue("@newPassword", newPassword);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.ExecuteNonQuery();
+
+            sqlCon.Close();
+>>>>>>> inprogress
         }
 
         // view account last 5 transactions

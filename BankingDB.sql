@@ -67,3 +67,5 @@ select userNumber from USERS where accUsername='admin' and accPassword='Admin@12
 select top 10 * from TRANSACTIONS order by userNumber desc
 
 delete from USERS where userNumber=11002
+
+select userNumber, accBalance from ACCOUNTS where accNumber=10000
