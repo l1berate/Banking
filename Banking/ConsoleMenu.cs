@@ -81,9 +81,25 @@ namespace Banking
             Console.ReadKey();
         }
 
-        public string ShowPrompt()
+        public string ShowPrompt(string inp="")
         {
             bool menuDone = true;
+            input = inp;
+            if (input != "" && infoTxt.Length > 9)
+            {
+                if (infoTxt.Substring(0, 10) == "Password: ")
+                {
+                    infoTxt += String.Concat(Enumerable.Repeat("*", input.Length));
+                }
+                else
+                {
+                    infoTxt += input;
+                }
+            }
+            else
+            {
+                infoTxt += input;
+            }
             ConsoleKeyInfo key;
             string validInput =
                 "\'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`-=[]\\;,./~!@#$%^&*()_+{}|:\"<>? ";

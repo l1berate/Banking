@@ -216,9 +216,9 @@ void adminMenu()
                     accBalance = accBalance.Concat(new double[] { balance }).ToArray();
                 }
 
-                ConsoleMenu askAdminMenu = new ConsoleMenu("Choose Account Privelage Level",
-                    new string[] {"Customer Privelages",                 //case 0
-                              "Administrator Privelages" },          //case 1
+                ConsoleMenu askAdminMenu = new ConsoleMenu("Choose Account Privilege Level",
+                    new string[] {"Customer Privileges",                 //case 0
+                              "Administrator Privileges" },          //case 1
                     "Press Up/Down keys and then Enter to make a selection",
                     ConsoleColor.White,
                     ConsoleColor.Green);
@@ -277,7 +277,100 @@ void adminMenu()
                 break;
             case 2:
                 // edit account
+                // get user number of account to edit
+                ConsoleMenu askEditNo = new ConsoleMenu("Edit an Account",
+                new string[] { "Please enter in the User Number of the account holder.",
+                "You can use search to find this if needed."},
+                "User Number: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                int usrNoEdit = Convert.ToInt32(askEditNo.ShowPrompt());
 
+                // get the user's info so we can have it prefilled in below.
+                string userInfo = "";
+                try
+                {
+                     userInfo = db.getUserAccountInfo(usrNoEdit);
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
+                string[] userInfoArray = userInfo.Split('|');
+
+
+                // Show user each entry and have them either hit enter to leave as is
+                // or change it.
+                ConsoleMenu askNameE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the full name or press enter to leave as is." },
+                "Full Name: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accNameE = askNameE.ShowPrompt(userInfoArray[1]);
+
+                ConsoleMenu askUsernameE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the username or press enter to leave as is." },
+                "Username: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accUsernameE = askUsernameE.ShowPrompt(userInfoArray[2]);
+
+                ConsoleMenu askPasswordE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the password or press enter to leave as is." },
+                "Password: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accPasswordE = askPasswordE.ShowPrompt(userInfoArray[3]);
+
+                ConsoleMenu askSSNE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the SSN or press enter to leave as is." },
+                "SSN: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accSSNE = askSSNE.ShowPrompt(userInfoArray[4]);
+
+                ConsoleMenu askEmailE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the email or press enter to leave as is." },
+                "Email: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accEmailE = askEmailE.ShowPrompt(userInfoArray[5]);
+
+                ConsoleMenu askPhoneE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the phone number or press enter to leave as is." },
+                "Phone Number: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accPhoneE = askPhoneE.ShowPrompt(userInfoArray[6]);
+
+                ConsoleMenu askAdminE = new ConsoleMenu("Edit Account Information",
+                new string[] { "Please change the privilege or press enter to leave as is.",
+                "Type in '1' for Administrator privileges or a '0' for Customer privileges."},
+                "Admin: ",
+                ConsoleColor.White,
+                ConsoleColor.Magenta);
+                string accAdminE = askAdminE.ShowPrompt(userInfoArray[7]);
+
+                // try to update the database with user's changes
+                try
+                {
+                    db.editAccount(usrNoEdit, accNameE, accUsernameE, accPasswordE, 
+                        accSSNE, accEmailE, accPhoneE, Convert.ToInt32(accAdminE));
+
+                    // success message to user
+                    ConsoleMenu usrEdited = new ConsoleMenu("Account Edited",
+                        new string[] { $"User Number {usrNoEdit} has been successfully edited." },
+                        "Press any key to exit.",
+                        ConsoleColor.DarkMagenta,
+                        ConsoleColor.White);
+                    usrEdited.ShowInfo();
+                    continueAdminMenu = true;
+
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 3:
@@ -374,7 +467,7 @@ void dbError(Exception e)
             ConsoleColor.DarkYellow);
     // get date time and output it with e.Message to the error.log
     // summarize try catch statements and this new dbError function
-    File.AppendAllText("error.log", String.Concat(DateTime.Now.Kind, " : ", e.Message));
+    File.AppendAllText("error.log", String.Concat(DateTime.Now.Date, " | ", DateTime.Now.TimeOfDay, " --- ", e.Message, "\n"));
     dbError.ShowInfo();
     mainMenu();
 }

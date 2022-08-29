@@ -135,11 +135,52 @@ namespace Banking
 
         // edit account
         public bool editAccount(int usrNo, string accName, string userName, string passWord,
-            string ssn, string email, string phoneno, string accType, double accBalance,
-            bool isAdmin = false)
+            string ssn, string email, string phoneno, int isAdmin)
         {
-
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                "update USERS set accName=@accName, accUsername=@userName, accPassword=@passWord, accSSN=@ssn, accEmail=@email, accPhone=@phoneno, isAdmin=@isAdmin where userNumber=@usrNo",
+                sqlCon);
+            cmd.Parameters.AddWithValue("@accName", accName);
+            cmd.Parameters.AddWithValue("@userName", userName);
+            cmd.Parameters.AddWithValue("@passWord", passWord);
+            cmd.Parameters.AddWithValue("@ssn", ssn);
+            cmd.Parameters.AddWithValue("@email", email);
+            cmd.Parameters.AddWithValue("@phoneno", phoneno);
+            cmd.Parameters.AddWithValue("@isAdmin", isAdmin);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.ExecuteNonQuery();
+            
+            sqlCon.Close();
             return false;
+        }
+
+        public string getUserAccountInfo(int usrNo)
+        {
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                    "select * from USERS where userNumber=@usrNo",
+                    sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            SqlDataReader reader = cmd.ExecuteReader();
+            string returnMe = "";
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    string bitValue = (reader.GetBoolean(7)) ? "1" : "0";
+                    returnMe += reader.GetInt32(0) + "|" + reader.GetString(1) +
+                        "|" + reader.GetString(2) + "|" + reader.GetString(3) + "|" +
+                        reader.GetString(4) + "|" + reader.GetString(5) + "|" +
+                        reader.GetString(6) + "|" + bitValue;
+                }
+            }
+            else
+            {
+                return "";
+            }
+            sqlCon.Close();
+            return returnMe;
         }
 
         // transfer funds
