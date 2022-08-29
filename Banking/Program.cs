@@ -47,7 +47,7 @@ void adminLoginMenu()
         ConsoleColor.DarkGreen);
     string password = adminPasswordPrompt.ShowPrompt();
 
-    if (db.checkAdminLogin(username, password))
+    if (!db.checkAdminLogin(username, password))
     {
         ConsoleMenu wrongCreds = new ConsoleMenu("Admin Login - Invalid Credentials",
         new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
@@ -77,7 +77,7 @@ void customerLoginMenu()
         ConsoleColor.DarkGreen);
     string password = custPasswordPrompt.ShowPrompt();
 
-    if (db.checkLogin(username, password))
+    if (!db.checkLogin(username, password))
     {
         ConsoleMenu wrongCreds = new ConsoleMenu("Customer Login - Invalid Credentials",
         new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },

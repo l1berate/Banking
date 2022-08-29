@@ -59,3 +59,5 @@ insert into TRANSACTIONS (accNumber, userNumber, transAmount, transDescription) 
 select * from TRANSACTIONS
 
 select count(*) from TRANSACTIONS
+
+select count(*) from USERS where accUsername='admin' and accPassword='Admin@1234' and isAdmin=1

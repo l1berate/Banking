@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.AccessControl;
+using System.Diagnostics;
 
 namespace Banking
 {
@@ -24,7 +25,7 @@ namespace Banking
                 sqlCon);
             cmd.Parameters.AddWithValue("@usrName", usrName);
             cmd.Parameters.AddWithValue("@pWord", pWord);
-            return ((int)cmd.ExecuteScalar() == 1) ? true : false;
+            return (Convert.ToInt32(cmd.ExecuteScalar()) == 1) ? true : false;
         }
 
         // check admin login creds
@@ -36,7 +37,7 @@ namespace Banking
                 sqlCon);
             cmd.Parameters.AddWithValue("@usrName", usrName);
             cmd.Parameters.AddWithValue("@pWord", pWord);
-            return ((int)cmd.ExecuteScalar() == 1) ? true : false;
+            return (Convert.ToInt32(cmd.ExecuteScalar()) == 1) ? true : false;
         }
 
 
