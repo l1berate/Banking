@@ -1,0 +1,17 @@
+8/29/2022 12:00:00 AM | 10:10:44.0035834 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:18:26.1360594 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:19:30.2326477 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:23:15.5266566 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:24:37.7709438 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:25:47.4238665 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:27:47.8038589 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:28:46.7872951 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:29:53.2019620 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:31:52.5669615 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:33:18.8266338 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:35:04.1919458 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:36:03.0348928 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/29/2022 12:00:00 AM | 10:39:27.1729658 --- There is already an open DataReader associated with this Command which must be closed first.
+8/29/2022 12:00:00 AM | 10:40:29.5783348 --- There is already an open DataReader associated with this Command which must be closed first.
+8/29/2022 12:00:00 AM | 10:41:31.7998149 --- There is already an open DataReader associated with this Command which must be closed first.
+8/29/2022 12:00:00 AM | 10:49:28.9445402 --- There is already an open DataReader associated with this Command which must be closed first.

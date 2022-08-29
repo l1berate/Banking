@@ -290,7 +290,7 @@ void adminMenu()
                 string userInfo = "";
                 try
                 {
-                     userInfo = db.getUserAccountInfo(usrNoEdit);
+                    userInfo = db.getUserAccountInfo(usrNoEdit);
                 }
                 catch (Exception ex)
                 {
@@ -354,7 +354,7 @@ void adminMenu()
                 // try to update the database with user's changes
                 try
                 {
-                    db.editAccount(usrNoEdit, accNameE, accUsernameE, accPasswordE, 
+                    db.editAccount(usrNoEdit, accNameE, accUsernameE, accPasswordE,
                         accSSNE, accEmailE, accPhoneE, Convert.ToInt32(accAdminE));
 
                     // success message to user
@@ -375,8 +375,45 @@ void adminMenu()
                 break;
             case 3:
                 // transfer funds
+                // ask for source accNumber
+                ConsoleMenu askTransSource = new ConsoleMenu("Transfer Funds",
+                new string[] { "Please enter the Account Number of the source account for the transfer." },
+                "Source Account Number: ",
+                ConsoleColor.White,
+                ConsoleColor.DarkBlue);
+                int source = Convert.ToInt32(askTransSource.ShowPrompt());
 
+                // ask for destination accNumber
+                ConsoleMenu askTransDest = new ConsoleMenu("Transfer Funds",
+                new string[] { "Please enter the Account Number of the destination account for the transfer." },
+                "Destination Account Number: ",
+                ConsoleColor.White,
+                ConsoleColor.DarkBlue);
+                int destination = Convert.ToInt32(askTransDest.ShowPrompt());
 
+                // ask for the amount of the transfer
+                ConsoleMenu askAmount = new ConsoleMenu("Enter Transfer Amount",
+                    new string[] { "Please enter in the amount to transfer." },
+                    "Amount: $",
+                    ConsoleColor.White,
+                    ConsoleColor.DarkBlue);
+                double amount = Convert.ToDouble(askAmount.ShowPrompt());
+
+                try
+                { 
+                    db.transferFunds(source, destination, amount);
+                    ConsoleMenu goodTransfer = new ConsoleMenu("Transfer Completed",
+                        new string[] { $"${Convert.ToString(amount)} has successfully been transfered to {destination}." },
+                        "Press any key to exit.",
+                        ConsoleColor.DarkBlue,
+                        ConsoleColor.White);
+                    goodTransfer.ShowInfo();
+                    continueAdminMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
                 break;
             case 4:
                 // search accounts
@@ -468,6 +505,7 @@ void dbError(Exception e)
     // get date time and output it with e.Message to the error.log
     // summarize try catch statements and this new dbError function
     File.AppendAllText("error.log", String.Concat(DateTime.Now.Date, " | ", DateTime.Now.TimeOfDay, " --- ", e.Message, "\n"));
+    Debug.WriteLine(e.ToString());
     dbError.ShowInfo();
     mainMenu();
 }
