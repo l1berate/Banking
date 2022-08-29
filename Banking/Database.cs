@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Security.AccessControl;
 using System.Diagnostics;
 using System.Security.Principal;
+using System.Data.Common;
 
 namespace Banking
 {
@@ -264,14 +265,77 @@ namespace Banking
         }
 
         // search accounts
-        public string searchAccounts()
+        public string[] searchAccounts(string searchMe, int column)
         {
-            //wrapper for getUserAccountInfo I guess?
+            // search USERS where columns[column] like @searchMe
             sqlCon.Open();
-
-
+            string[] columns = new string[] { 
+                "userNumber",
+                "accName",
+                "accUsername",
+                "accSSN",
+                "accEmail",
+                "accPhone",
+                "isAdmin"};
+            SqlCommand cmd = new SqlCommand(
+                $"select * from USERS where {columns[column]} like '%{searchMe}%'", 
+                sqlCon);
+            //cmd.Parameters.AddWithValue("@searchMe", searchMe);
+            SqlDataReader reader = cmd.ExecuteReader();
+            string[] results = new string[] { "User # |   Account Name    |   Username   |    SSN    |         Email         |Phone Number|Admin",
+                                              "-------|-------------------|--------------|-----------|-----------------------|------------|-----"};
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //accType = accType.Concat(new string[] { "Checkings" }).ToArray();
+                    string admin = reader.GetBoolean(7) ? "true" : "false";
+                    string[] resultsArray = 
+                        new string[] { $"{reader.GetInt32(0)}",
+                                       $"{reader.GetString(1)}",
+                                       $"{reader.GetString(2)}",
+                                       $"{reader.GetString(4)}",
+                                       $"{reader.GetString(5)}",
+                                       $"{reader.GetString(6)}",
+                                       $"{admin}" };
+                    string resultString = "";
+                    int i = 0;
+                    foreach (string res in results[0].Split("|"))
+                    {
+                        if (res.Length < resultsArray[i].Length)
+                        {
+                            resultString += String.Concat(resultsArray[i].Substring(0,res.Length-2), "..");
+                            if (i < resultsArray.Length-1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length == resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length > resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            resultString += String.Concat(Enumerable.Repeat(" ", res.Length - resultsArray[i].Length));
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        i++;
+                    }
+                    results = results.Concat(new string[] { 
+                        resultString }).ToArray();
+                }
+            }
+            reader.Close();
             sqlCon.Close();
-            return "";
+            return results.Length > 2 ? results : new string[] { "No accounts found." };
         }
 
         // accounts list
@@ -280,11 +344,64 @@ namespace Banking
             //even bigger wrapper for getUserAccountInfo? 
             //sounds like a job for tomorrow
             sqlCon.Open();
-
-
+            SqlCommand cmd = new SqlCommand(
+                $"select top {Console.WindowHeight-11} * from USERS",
+                sqlCon);
+            SqlDataReader reader = cmd.ExecuteReader();
+            string[] results = new string[] { "User # |   Account Name    |   Username   |    SSN    |         Email         |Phone Number|Admin",
+                                              "-------|-------------------|--------------|-----------|-----------------------|------------|-----"};
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //accType = accType.Concat(new string[] { "Checkings" }).ToArray();
+                    string admin = reader.GetBoolean(7) ? "true" : "false";
+                    string[] resultsArray =
+                        new string[] { $"{reader.GetInt32(0)}",
+                                       $"{reader.GetString(1)}",
+                                       $"{reader.GetString(2)}",
+                                       $"{reader.GetString(4)}",
+                                       $"{reader.GetString(5)}",
+                                       $"{reader.GetString(6)}",
+                                       $"{admin}" };
+                    string resultString = "";
+                    int i = 0;
+                    foreach (string res in results[0].Split("|"))
+                    {
+                        if (res.Length < resultsArray[i].Length)
+                        {
+                            resultString += String.Concat(resultsArray[i].Substring(0, res.Length - 2), "..");
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length == resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length > resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            resultString += String.Concat(Enumerable.Repeat(" ", res.Length - resultsArray[i].Length));
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        i++;
+                    }
+                    results = results.Concat(new string[] {
+                        resultString }).ToArray();
+                }
+            }
+            reader.Close();
             sqlCon.Close();
-
-            return new string[0];
+            return results.Length > 1 ? results : new string[] { "No accounts found." };
         }
 
         // summarize accounts

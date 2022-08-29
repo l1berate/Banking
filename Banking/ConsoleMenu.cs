@@ -21,6 +21,8 @@ namespace Banking
         private int menuSelectorIndex = 0;
         private string infoTxt = "";
         private string input = "";
+        private int page = 0;
+        private int maxPages = 1;
 
         #endregion
 
@@ -75,10 +77,49 @@ namespace Banking
             return menuSelectorIndex;
         }
 
-        public void ShowInfo()
+        public void ShowInfo(int spaces=12)
         {
-            WriteInfo();
-            Console.ReadKey();
+            bool menuDone = true;
+            bool write = true;
+            ConsoleKeyInfo key;
+            do
+            {
+                if (write)
+                {
+                    WriteInfo(spaces);
+                }
+                write = true;
+                key = Console.ReadKey(true);
+
+                if (key.Key == ConsoleKey.DownArrow)
+                {
+                    if (page < maxPages)
+                    {
+                        page++;
+                        continue;
+                    }
+                    else
+                    {
+                        write = false;
+                    }
+                }
+                else if (key.Key == ConsoleKey.UpArrow)
+                {
+                    if (page - 1 >= 0)
+                    {
+                        page--;
+                        continue;
+                    }
+                    else
+                    {
+                        write = false;
+                    }
+                }
+                else
+                {
+                    menuDone = false;
+                }
+            } while (menuDone);
         }
 
         public string ShowPrompt(string inp="")
@@ -153,12 +194,13 @@ namespace Banking
             return "";
         }
         public ConsoleMenu(string title, string[] items, string info = "", 
-            ConsoleColor bg = ConsoleColor.Black, ConsoleColor fg = ConsoleColor.Cyan)
+            ConsoleColor bg = ConsoleColor.Black, ConsoleColor fg = ConsoleColor.Cyan, 
+            int tabSpaces=12)
         {
             menuTitle = title;
             if (menuTitle.Length > Console.WindowWidth - 28)
             {
-                menuTitle = menuTitle.Substring(0, Console.WindowWidth - 28);
+                menuTitle = menuTitle.Substring(0, Console.WindowWidth - (tabSpaces*2));
                 menuTitle += "..";
             }
             
@@ -169,7 +211,7 @@ namespace Banking
                     string newitem = "";
                     foreach (string word in item.Split(" "))
                     {
-                        if (newitem.Length + word.Length >= Console.WindowWidth - 28)
+                        if (newitem.Length + word.Length >= Console.WindowWidth - (tabSpaces * 2))
                         {
                             menuItems = menuItems.Concat(new string[] { newitem }).ToArray();
                             newitem = "" + word + " ";
@@ -187,7 +229,12 @@ namespace Banking
                     menuItems = menuItems.Concat(new string[] { item }).ToArray();
                 }
             }
-            
+
+            if (menuItems.Length > Console.WindowHeight - 11)
+            {
+                maxPages = (int)(menuItems.Length / (Console.WindowHeight - 11));
+                maxPages += (menuItems.Length % (Console.WindowHeight - 11)) != 0 ? 1 : 0;
+            }
             bgc = bg;
             fgc = fg;
             specialbg = fg;
@@ -206,7 +253,10 @@ namespace Banking
         private void WriteMenu()
         {
             Console.Clear();
-
+            if (menuItems.Length > Console.WindowHeight - 11)
+            {
+                menuItems = menuItems.Take(Console.WindowHeight - 11).ToArray();
+            }
             WriteTitle();
             WriteEmptyLine(4);
 
@@ -255,27 +305,32 @@ namespace Banking
 
         }
 
-        private void WriteInfo()
+        private void WriteInfo(int spaceCount=12)
         {
             Console.Clear();
-
             WriteTitle();
             WriteEmptyLine(4);
 
-            for (int i = 0; i < menuItems.Length; i++)
+            int linesWritten = 0;
+            for (int i = page* (Console.WindowHeight - 11); i < (Console.WindowHeight - 11)*(page+1); i++)
             {
+                if (i >= menuItems.Length)
+                {
+                    break;
+                }
+                linesWritten++;
                 Console.BackgroundColor = bgc;
                 Console.ForegroundColor = fgc;
                 Console.Write(" !");
 
-                Console.Write("            ");
+                Console.Write(String.Concat(Enumerable.Repeat(" ", spaceCount)));
                 Console.Write(menuItems[i]);
-                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - menuItems[i].Length - 14
+                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - menuItems[i].Length - spaceCount-2
                     - lastBit.Length)));
                 Console.Write(lastBit);
             }
 
-            WriteEmptyLine(Console.WindowHeight - menuItems.Length - 10);
+            WriteEmptyLine(Console.WindowHeight - linesWritten - 10);
 
             if (infoTxt == "")
             {
@@ -290,6 +345,7 @@ namespace Banking
             Console.Write(String.Concat(" !", string.Concat(Enumerable.Repeat("~", (Console.WindowWidth - 2 - lastBit.Length)))));
             Console.Write(lastBit);
         }
+
 
         private void WriteTitle()
         {

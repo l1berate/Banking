@@ -417,7 +417,41 @@ void adminMenu()
                 break;
             case 4:
                 // search accounts
+                ConsoleMenu searchMenu = new ConsoleMenu("Search Accounts",
+                    new string[] { "User Number",
+                                   "Name",
+                                   "Username",
+                                   "SSN",
+                                   "Email",
+                                   "Phone Number",
+                                   "Priveleges Level"},
+                    "Please choose what you would like to search by and then press enter.",
+                    ConsoleColor.Gray,
+                    ConsoleColor.DarkMagenta);
+                int searchChoice = searchMenu.ShowMenu();
 
+                ConsoleMenu searchStringMenu = new ConsoleMenu("Search Value",
+                    new string[] { "Please enter your search value." },
+                    "?: ",
+                    ConsoleColor.Gray,
+                    ConsoleColor.DarkMagenta);
+                string searchString = searchStringMenu.ShowPrompt();
+
+                try
+                {
+                    string[] accountsFound = db.searchAccounts(searchString, searchChoice);
+                    ConsoleMenu searchResults = new ConsoleMenu("Search Results",
+                        accountsFound,
+                        "Press Up/Down to look at other pages or any other key to exit.",
+                        ConsoleColor.DarkMagenta,
+                        ConsoleColor.Gray, 4); 
+                    searchResults.ShowInfo(4);
+                    continueAdminMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 5:
