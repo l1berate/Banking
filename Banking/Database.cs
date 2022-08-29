@@ -51,7 +51,9 @@ namespace Banking
                 // 3 insert into commands to generate new account
                 // use try/catch blocks and return false if account creation fails
                 // easy way to pass error message to consolemenu?
-                SqlCommand cmd = new SqlCommand("", sqlCon);
+                SqlCommand cmd = new SqlCommand(
+                    "", 
+                    sqlCon);
             }
             else
             {

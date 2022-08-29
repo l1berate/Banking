@@ -2,6 +2,7 @@
 
 using Banking;
 using System;
+using System.IO;
 using System.Diagnostics;
 
 //initialize db object for everyone to use
@@ -46,18 +47,25 @@ void adminLoginMenu()
         ConsoleColor.Black,
         ConsoleColor.DarkGreen);
     string password = adminPasswordPrompt.ShowPrompt();
-
-    if (!db.checkAdminLogin(username, password))
+    try
     {
-        ConsoleMenu wrongCreds = new ConsoleMenu("Admin Login - Invalid Credentials",
-        new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
-        "",
-        ConsoleColor.Black,
-        ConsoleColor.Red);
-        wrongCreds.ShowInfo();
-        mainMenu();
+        if (!db.checkAdminLogin(username, password))
+        {
+            ConsoleMenu wrongCreds = new ConsoleMenu("Admin Login - Invalid Credentials",
+            new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
+            "",
+            ConsoleColor.Black,
+            ConsoleColor.Red);
+            wrongCreds.ShowInfo();
+            mainMenu();
+        }
+        adminMenu();
     }
-    adminMenu();
+    catch (Exception ex)
+    {
+        dbError(ex);
+    }
+    
 
 }
 
@@ -77,17 +85,25 @@ void customerLoginMenu()
         ConsoleColor.DarkGreen);
     string password = custPasswordPrompt.ShowPrompt();
 
-    if (!db.checkLogin(username, password))
+    try
     {
-        ConsoleMenu wrongCreds = new ConsoleMenu("Customer Login - Invalid Credentials",
-        new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
-        "",
-        ConsoleColor.Black,
-        ConsoleColor.Red);
-        wrongCreds.ShowInfo();
-        mainMenu();
+        if (!db.checkLogin(username, password))
+        {
+            ConsoleMenu wrongCreds = new ConsoleMenu("Customer Login - Invalid Credentials",
+            new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
+            "",
+            ConsoleColor.Black,
+            ConsoleColor.Red);
+            wrongCreds.ShowInfo();
+            mainMenu();
+        }
+        customerMenu();
     }
-    customerMenu();
+    catch (Exception ex)
+    {
+        dbError(ex);
+    }
+    
 }
 
 void adminMenu()
@@ -186,6 +202,22 @@ void exitScreen()
         ConsoleColor.Black,
         ConsoleColor.Gray);
     wrongCreds.ShowInfo();
+}
+
+void dbError(Exception e)
+{
+    ConsoleMenu dbError = new ConsoleMenu("Database Error",
+            new string[] { "We're sorry, it seems we've encountered some issue with the database.", 
+                "This issue has already been logged and we'll do our best to resolve this as quicly as possible!", 
+                "We appreciate your patience and continued patronage." },
+            "Error Logged - Press any key to exit.",
+            ConsoleColor.Black,
+            ConsoleColor.DarkYellow);
+    // get date time and output it with e.Message to the error.log
+    // summarize try catch statements and this new dbError function
+    File.AppendAllText("error.log", String.Concat(DateTime.Now.ToString("en-US"), " : ", e.Message));
+    dbError.ShowInfo();
+    mainMenu();
 }
 
 #endregion
