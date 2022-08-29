@@ -4,6 +4,9 @@ using Banking;
 using System;
 using System.Diagnostics;
 
+//initialize db object for everyone to use
+Database db = new Database();
+
 #region Menus
 
 void mainMenu()
@@ -44,7 +47,7 @@ void adminLoginMenu()
         ConsoleColor.DarkGreen);
     string password = adminPasswordPrompt.ShowPrompt();
 
-    if (username != "Admin" || password != "password")
+    if (db.checkAdminLogin(username, password))
     {
         ConsoleMenu wrongCreds = new ConsoleMenu("Admin Login - Invalid Credentials",
         new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
@@ -74,7 +77,7 @@ void customerLoginMenu()
         ConsoleColor.DarkGreen);
     string password = custPasswordPrompt.ShowPrompt();
 
-    if (username != "Customer" || password != "password")
+    if (db.checkLogin(username, password))
     {
         ConsoleMenu wrongCreds = new ConsoleMenu("Customer Login - Invalid Credentials",
         new string[] { "The credentials you have entered are incorrect. Please press any key to exit." },
@@ -193,7 +196,5 @@ if (Console.WindowWidth < 50 && Console.WindowHeight < 50)
     Console.WriteLine("Error: Console is too small, please expand the console window and try again.");
     Environment.Exit(0);
 }
-
-//initialize db object for everyone to use
 
 mainMenu();

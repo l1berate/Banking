@@ -50,9 +50,7 @@ insert into ACCOUNTS (userNumber, accType) values(10000, 'Checkings')
 
 delete from ACCOUNTS
 
-drop table TRANSACTIONS
-
-drop table ACCOUNTS
+drop table TRANSACTIONS, ACCOUNTS
 
 select top 100 * from ACCOUNTS
 
