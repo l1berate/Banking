@@ -517,11 +517,42 @@ namespace Banking
 
 
         // deposit
-        public void deposit(int destinationAccNo, double transAmount)
+        public void deposit(string accType, double transAmount)
         {
             // same as withdraw just positive instead of negative
             sqlCon.Open();
+            SqlCommand cmd0 = new SqlCommand(
+                "select accNumber from ACCOUNTS where userNumber=@usrNo and accType=@accType",
+                sqlCon);
+            cmd0.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd0.Parameters.AddWithValue("@accType", accType);
+            int accNumber = Convert.ToInt32(cmd0.ExecuteScalar());
 
+            SqlCommand cmd = new SqlCommand(
+                "select accBalance from ACCOUNTS where userNumber=@usrNo and accType=@accType",
+                sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.Parameters.AddWithValue("@accType", accType);
+            double oldBalance = Convert.ToDouble(cmd.ExecuteScalar());
+
+            SqlCommand cmd1 = new SqlCommand(
+                "update ACCOUNTS set accBalance=@newBalance where userNumber=@usrNo and accType=@accType",
+                sqlCon);
+            cmd1.Parameters.AddWithValue("@newBalance", Math.Round(oldBalance + transAmount, 2));
+            cmd1.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd1.Parameters.AddWithValue("@accType", accType);
+
+            cmd1.ExecuteNonQuery();
+
+
+            SqlCommand cmd2 = new SqlCommand(
+                "insert into TRANSACTIONS (accNumber, userNumber, transAmount, transDescription) values (@accNumber, @usrNo, @newBalance, @transD)",
+                    sqlCon);
+            cmd2.Parameters.AddWithValue("@accNumber", accNumber);
+            cmd2.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd2.Parameters.AddWithValue("@newBalance", Math.Round(transAmount, 2));
+            cmd2.Parameters.AddWithValue("@transD", "User Deposit");
+            cmd2.ExecuteScalar();
 
             sqlCon.Close();
 

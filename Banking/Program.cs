@@ -583,7 +583,37 @@ void customerMenu()
                 break;
             case 2:
                 // deposit money
+                try
+                {
+                    string[] accounts = db.getAccTypes();
+                    ConsoleMenu depositMenu = new ConsoleMenu("Deposit Money",
+                    accounts,
+                    "Choose the account you would like to deposit to.",
+                    ConsoleColor.White,
+                    ConsoleColor.DarkGreen);
+                    string accChoice = accounts[depositMenu.ShowMenu()];
 
+                    ConsoleMenu depositAmountMenu = new ConsoleMenu("Deposit Money",
+                        new string[] { "Please enter in how much you would like to deposit." },
+                        "> $",
+                        ConsoleColor.White,
+                        ConsoleColor.DarkGreen);
+                    double depositAmount = Convert.ToDouble(depositAmountMenu.ShowPrompt());
+
+                    db.deposit(accChoice, depositAmount);
+
+                    ConsoleMenu depositGood = new ConsoleMenu("Deposit Successful",
+                        new string[] { $"{String.Format("{0:C}", Convert.ToDecimal(depositAmount))} has been deposited into your {accChoice} account." },
+                        "Press any key to exit.",
+                        ConsoleColor.Green,
+                        ConsoleColor.White);
+                    depositGood.ShowInfo();
+                    continueMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 3:
