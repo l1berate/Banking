@@ -16,7 +16,7 @@ namespace Banking
     {
         SqlConnection sqlCon = new SqlConnection(
                 "server=DESKTOP-A1JL32J;database=bankingDB;integrated security=true");
-
+        int usrNo = 0;
         
         // check login creds
         public bool checkLogin(string usrName, string pWord)
@@ -28,6 +28,14 @@ namespace Banking
             cmd.Parameters.AddWithValue("@usrName", usrName);
             cmd.Parameters.AddWithValue("@pWord", pWord);
             bool returnValue = (Convert.ToInt32(cmd.ExecuteScalar()) == 1) ? true : false;
+
+            SqlCommand cmd1 = new SqlCommand(
+                "select userNumber from USERS where accUsername=@usrName and accPassword=@pWord",
+                sqlCon);
+            cmd1.Parameters.AddWithValue("@usrName", usrName);
+            cmd1.Parameters.AddWithValue("@pWord", pWord);
+            usrNo = Convert.ToInt32(cmd1.ExecuteScalar());
+
             sqlCon.Close();
             return returnValue;
         }
@@ -156,13 +164,17 @@ namespace Banking
             return false;
         }
 
-        public string getUserAccountInfo(int usrNo)
+        public string getUserAccountInfo(int usrNumber = 0)
         {
             sqlCon.Open();
+            if (usrNumber == 0)
+            {
+                usrNumber = usrNo;
+            }
             SqlCommand cmd = new SqlCommand(
                     "select * from USERS where userNumber=@usrNo",
                     sqlCon);
-            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.Parameters.AddWithValue("@usrNo", usrNumber);
             SqlDataReader reader = cmd.ExecuteReader();
             string returnMe = "";
             if (reader.HasRows)
@@ -353,25 +365,86 @@ namespace Banking
         // summarize accounts
         public string summarizeAccounts()
         {
-            //return back the total statements we need to get displayed
+            // return back the total statements we need to get displayed
+            // we need to select count(*) in ACCOUNTS for the total number of accounts
+            // total balance, select count(*) where accType="Checkings | Savings | Loan"
             sqlCon.Open();
-            // test changes
+            SqlCommand cmd = new SqlCommand(
+                "select count(*) from ACCOUNTS", 
+                sqlCon);
+            int totalAccounts = Convert.ToInt32(cmd.ExecuteScalar());
+
+            SqlCommand cmd1 = new SqlCommand(
+                "select sum(accBalance) from ACCOUNTS",
+                sqlCon);
+            string totalBalance = String.Format("{0:C}", Convert.ToDecimal(cmd1.ExecuteScalar()));
+
+            SqlCommand cmd2 = new SqlCommand(
+                "select count(*) from ACCOUNTS where accType='Checkings'",
+                sqlCon);
+            int totalCheckings = Convert.ToInt32(cmd2.ExecuteScalar());
+
+            SqlCommand cmd3 = new SqlCommand(
+                "select count(*) from ACCOUNTS where accType='Savings'",
+                sqlCon);
+            int totalSavings = Convert.ToInt32(cmd3.ExecuteScalar());
+
+            SqlCommand cmd4 = new SqlCommand(
+                "select count(*) from ACCOUNTS where accType='Loan'",
+                sqlCon);
+            int totalLoan = Convert.ToInt32(cmd4.ExecuteScalar());
 
             sqlCon.Close();
-            return "";
+            return $"{totalAccounts}|{totalBalance}|{totalCheckings}|{totalSavings}|{totalLoan}";
         }
 
         // view account
-        public string viewAccount(int usrNo)
+        public string[] viewAccount()
         {
             // yet another wrapper for getUserAccountInfo?? Should be easy at
             // least hopefully, if even needed at all
+            string[] accountInfo = getUserAccountInfo().Split("|");
+            // usrNumber | accName | accUsername | accPassword | accSSN | accEmail | accPhone | isAdmin
+
             sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                "select accType, accBalance from ACCOUNTS where userNumber=@usrNo",
+                sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
 
+            string[] returnMe = new string[] { };
 
+            // lets show customer their...
+            // User Number :
+            // menuItems = menuItems.Concat(new string[] { newitem }).ToArray();
+            returnMe = returnMe.Concat(new string[] { $"User Number: {usrNo}" }).ToArray();
+            // Name :
+            returnMe = returnMe.Concat(new string[] { $"Name: {accountInfo[1]}" }).ToArray();
+            // Username : 
+            returnMe = returnMe.Concat(new string[] { $"Username: {accountInfo[2]}" }).ToArray();
+            // Email : 
+            returnMe = returnMe.Concat(new string[] { $"Email: {accountInfo[5]}" }).ToArray();
+            // Phone :
+            returnMe = returnMe.Concat(new string[] { $"Phone Number: {accountInfo[6]}" }).ToArray();
+            // Checkings and Other Accounts
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    returnMe = returnMe.Concat(new string[] { $"{reader.GetString(0)}: {String.Format("{0:C}", reader.GetDecimal(1))}" }).ToArray();
+                }
+                reader.Close();
+            }
+            else
+            {
+                reader.Close();
+            }
+            
             sqlCon.Close();
 
-            return "";
+            return returnMe;
         }
 
 
@@ -399,7 +472,7 @@ namespace Banking
         }
 
         // change password
-        public void changePassword(int usrNo, string newPassword)
+        public void changePassword(string newPassword)
         {
             // a simple update of the password
             sqlCon.Open();

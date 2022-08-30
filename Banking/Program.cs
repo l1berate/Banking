@@ -114,13 +114,13 @@ void adminMenu()
         continueAdminMenu = false;
         ConsoleMenu adminMenu = new ConsoleMenu("Admin Menu",
         new string[] { "Create a new account",
-                        "Delete an account",
-                        "Edit account details",
-                        "Transfer funds between accounts",
-                        "Search accounts",
-                        "List accounts",
-                        "Summary of all accounts",
-                        "Exit"},
+            "Delete an account",
+            "Edit account details",
+            "Transfer funds between accounts",
+            "Search accounts",
+            "List accounts",
+            "Summary of all accounts",
+            "Exit" },
         "Press Up/Down keys and then Enter to make a selection",
         ConsoleColor.White,
         ConsoleColor.Black);
@@ -177,10 +177,10 @@ void adminMenu()
                 string phoneno = askPhone.ShowPrompt();
 
                 ConsoleMenu accComboMenu = new ConsoleMenu("Choose which Accounts to Open",
-                    new string[] {"Checkings only",                 //case 0
-                              "Checkings & Savings",            //case 1
-                              "Checkings & Loan",               //case 2
-                              "Checkings, Savings, & Loan" },   //case 3
+                    new string[] { "Checkings only",                 //case 0
+                        "Checkings & Savings",            //case 1
+                        "Checkings & Loan",               //case 2
+                        "Checkings, Savings, & Loan" },   //case 3
                     "Press Up/Down keys and then Enter to choose; Every account must have a checkings.",
                     ConsoleColor.White,
                     ConsoleColor.Green);
@@ -217,8 +217,8 @@ void adminMenu()
                 }
 
                 ConsoleMenu askAdminMenu = new ConsoleMenu("Choose Account Privilege Level",
-                    new string[] {"Customer Privileges",                 //case 0
-                              "Administrator Privileges" },          //case 1
+                    new string[] { "Customer Privileges",                 //case 0
+                        "Administrator Privileges" },          //case 1
                     "Press Up/Down keys and then Enter to make a selection",
                     ConsoleColor.White,
                     ConsoleColor.Green);
@@ -251,7 +251,7 @@ void adminMenu()
                 // get user number of account to delete
                 ConsoleMenu askUsrNo = new ConsoleMenu("Delete an Account",
                 new string[] { "Please enter in the User Number of the account holder.",
-                "You can use search to find this if needed."},
+                    "You can use search to find this if needed." },
                 "User Number: ",
                 ConsoleColor.Red,
                 ConsoleColor.Black);
@@ -280,7 +280,7 @@ void adminMenu()
                 // get user number of account to edit
                 ConsoleMenu askEditNo = new ConsoleMenu("Edit an Account",
                 new string[] { "Please enter in the User Number of the account holder.",
-                "You can use search to find this if needed."},
+                    "You can use search to find this if needed." },
                 "User Number: ",
                 ConsoleColor.White,
                 ConsoleColor.Magenta);
@@ -345,7 +345,7 @@ void adminMenu()
 
                 ConsoleMenu askAdminE = new ConsoleMenu("Edit Account Information",
                 new string[] { "Please change the privilege or press enter to leave as is.",
-                "Type in '1' for Administrator privileges or a '0' for Customer privileges."},
+                    "Type in '1' for Administrator privileges or a '0' for Customer privileges." },
                 "Admin: ",
                 ConsoleColor.White,
                 ConsoleColor.Magenta);
@@ -400,7 +400,7 @@ void adminMenu()
                 double amount = Convert.ToDouble(askAmount.ShowPrompt());
 
                 try
-                { 
+                {
                     db.transferFunds(source, destination, amount);
                     ConsoleMenu goodTransfer = new ConsoleMenu("Transfer Completed",
                         new string[] { $"${Convert.ToString(amount)} has successfully been transfered to {destination}." },
@@ -419,12 +419,12 @@ void adminMenu()
                 // search accounts
                 ConsoleMenu searchMenu = new ConsoleMenu("Search Accounts",
                     new string[] { "User Number",
-                                   "Name",
-                                   "Username",
-                                   "SSN",
-                                   "Email",
-                                   "Phone Number",
-                                   "Priveleges Level"},
+                        "Name",
+                        "Username",
+                        "SSN",
+                        "Email",
+                        "Phone Number",
+                        "Priveleges Level" },
                     "Please choose what you would like to search by and then press enter.",
                     ConsoleColor.Gray,
                     ConsoleColor.DarkMagenta);
@@ -444,7 +444,7 @@ void adminMenu()
                         accountsFound,
                         "Press Up/Down to look at other pages or any other key to exit.",
                         ConsoleColor.DarkMagenta,
-                        ConsoleColor.Gray, 4); 
+                        ConsoleColor.Gray, 4);
                     searchResults.ShowInfo(4);
                     continueAdminMenu = true;
                 }
@@ -477,7 +477,25 @@ void adminMenu()
                 // summarize accounts
                 // total accounts: XX total balances: XX
                 // Checkings: XX accounts | Savings: XX accounts | Loan: XX accounts
-
+                try
+                {
+                    string[] summaries = db.summarizeAccounts().Split("|");
+                    ConsoleMenu summaryMenu = new ConsoleMenu("",
+                        new string[] { $"Total Accounts: {summaries[0]}",
+                                       $"Total Balances: {summaries[1]}",
+                                       $"Checkings Accounts: {summaries[2]}",
+                                       $"Savings Accounts: {summaries[3]}",
+                                       $"Loan Accounts: {summaries[4]}"},
+                        "Press any key to exit.",
+                        ConsoleColor.Cyan,
+                        ConsoleColor.Black);
+                    summaryMenu.ShowInfo();
+                    continueAdminMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 7:
@@ -490,45 +508,72 @@ void adminMenu()
 
 void customerMenu()
 {
-    ConsoleMenu custMenu = new ConsoleMenu("Customer Menu",
+    bool continueMenu = false;
+    do
+    {
+        continueMenu = false;
+        ConsoleMenu custMenu = new ConsoleMenu("Customer Menu",
         new string[] {"View details",               //case 0
                       "Make a withdrawal",          //case 1
                       "Deposit Funds",              //case 2
                       "Transfer money",             //case 3
                       "Change Password",            //case 4
-                      "View Last 5 Transactions",   //case 5
+                      "View Transactions",          //case 5
                       "Exit"},                      //case 6
         "Press Up/Down keys and then Enter to make a selection",
         ConsoleColor.White,
         ConsoleColor.DarkBlue);
-    int choice = custMenu.ShowMenu();
+        int choice = custMenu.ShowMenu();
 
-    switch (choice)
-    {
-        case 0:
+        switch (choice)
+        {
+            case 0:
+                // view account info
+                try
+                {
+                    string[] accountInfo = db.viewAccount();
+                    ConsoleMenu viewAccount = new ConsoleMenu("Customer Information",
+                        accountInfo,
+                        "Press any key to exit.",
+                        ConsoleColor.White,
+                        ConsoleColor.DarkGreen);
+                    viewAccount.ShowInfo();
+                    continueMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
+                break;
+            case 1:
+                // withdraw money
 
-            break;
-        case 1:
-
-            break;
-        case 2:
-
-            break;
-        case 3:
-
-            break;
-        case 4:
-
-            break;
-        case 5:
-            
-            break;
-        case 6:
-            mainMenu();
-            break;
-    }
+                break;
+            case 2:
+                // deposit money
 
 
+                break;
+            case 3:
+                // transfer money
+
+
+                break;
+            case 4:
+                // change password
+
+
+                break;
+            case 5:
+                // view transactions
+
+
+                break;
+            case 6:
+                mainMenu();
+                break;
+        }
+    } while (continueMenu);
 }
 
 void exitScreen()

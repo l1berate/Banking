@@ -16,3 +16,5 @@
 8/29/2022 12:00:00 AM | 10:41:31.7998149 --- There is already an open DataReader associated with this Command which must be closed first.
 8/29/2022 12:00:00 AM | 10:49:28.9445402 --- There is already an open DataReader associated with this Command which must be closed first.
 8/29/2022 12:00:00 AM | 12:03:28.1440843 --- Index was outside the bounds of the array.
+8/30/2022 12:00:00 AM | 00:43:24.0604831 --- Unable to cast object of type 'System.Decimal' to type 'System.Double'.
+8/30/2022 12:00:00 AM | 01:30:14.3464172 --- The connection was not closed. The connection's current state is open.
