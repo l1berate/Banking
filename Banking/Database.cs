@@ -447,13 +447,69 @@ namespace Banking
             return returnMe;
         }
 
-
-        // withdraw
-        public void withdraw(int sourceAccNo, double transAmount)
+        public string[] getAccTypes()
         {
-            // sql updates to make a transaction, then update the ACCOUNTS table balance
             sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                "select accType from ACCOUNTS where userNumber=@usrNo",
+                sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            
+            string[] returnMe = new string[] { };
 
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    returnMe = returnMe.Concat(new string[] { $"{reader.GetString(0)}" }).ToArray();
+                }
+                reader.Close();
+            }
+            else
+            {
+                reader.Close();
+            }
+            sqlCon.Close();
+            return returnMe;
+        }
+        // withdraw
+        public void withdraw(string accType, double transAmount)
+        {
+            // sql updates to update the ACCOUNTS table balance then make a transaction
+            sqlCon.Open();
+            SqlCommand cmd0 = new SqlCommand(
+                "select accNumber from ACCOUNTS where userNumber=@usrNo and accType=@accType",
+                sqlCon);
+            cmd0.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd0.Parameters.AddWithValue("@accType", accType);
+            int accNumber = Convert.ToInt32(cmd0.ExecuteScalar());
+
+            SqlCommand cmd = new SqlCommand(
+                "select accBalance from ACCOUNTS where userNumber=@usrNo and accType=@accType", 
+                sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.Parameters.AddWithValue("@accType", accType);
+            double oldBalance = Convert.ToDouble(cmd.ExecuteScalar());
+
+            SqlCommand cmd1 = new SqlCommand(
+                "update ACCOUNTS set accBalance=@newBalance where userNumber=@usrNo and accType=@accType",
+                sqlCon);
+            cmd1.Parameters.AddWithValue("@newBalance", Math.Round(oldBalance - transAmount, 2));
+            cmd1.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd1.Parameters.AddWithValue("@accType", accType);
+            
+            cmd1.ExecuteNonQuery();
+
+
+            SqlCommand cmd2 = new SqlCommand(
+                "insert into TRANSACTIONS (accNumber, userNumber, transAmount, transDescription) values (@accNumber, @usrNo, @newBalance, @transD)",
+                    sqlCon);
+            cmd2.Parameters.AddWithValue("@accNumber", accNumber);
+            cmd2.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd2.Parameters.AddWithValue("@newBalance", Math.Round(-1 * transAmount, 2));
+            cmd2.Parameters.AddWithValue("@transD", "User Withdrawal");
+            cmd2.ExecuteScalar();
 
             sqlCon.Close();
 

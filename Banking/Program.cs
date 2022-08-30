@@ -547,6 +547,38 @@ void customerMenu()
                 break;
             case 1:
                 // withdraw money
+                try
+                {
+                    string[] accounts = db.getAccTypes();
+                    ConsoleMenu withdrawMenu = new ConsoleMenu("Withdraw Money",
+                    accounts,
+                    "Choose the account you would like to withdraw from.",
+                    ConsoleColor.White,
+                    ConsoleColor.DarkGreen);
+                    string accChoice = accounts[withdrawMenu.ShowMenu()];
+
+                    ConsoleMenu withdrawAmountMenu = new ConsoleMenu("Withdraw Money",
+                        new string[] { "Please enter in how much you would like to withdraw." },
+                        "> $",
+                        ConsoleColor.White,
+                        ConsoleColor.DarkGreen);
+                    double withdrawAmount = Convert.ToDouble(withdrawAmountMenu.ShowPrompt());
+
+                    db.withdraw(accChoice, withdrawAmount);
+
+                    ConsoleMenu withdrawGood = new ConsoleMenu("Withdraw Successful",
+                        new string[] { $"{String.Format("{0:C}", Convert.ToDecimal(withdrawAmount))} has been withdrawn from your {accChoice} account." },
+                        "Press any key to exit.",
+                        ConsoleColor.Green,
+                        ConsoleColor.White);
+                    withdrawGood.ShowInfo();
+                    continueMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
+                
 
                 break;
             case 2:

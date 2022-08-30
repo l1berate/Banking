@@ -58,7 +58,7 @@ insert into TRANSACTIONS (accNumber, userNumber, transAmount, transDescription) 
 
 select * from TRANSACTIONS
 
-select count(*) from TRANSACTIONS
+select count(*) from ACCOUNTS
 
 select count(*) from USERS where accUsername='admin' and accPassword='Admin@1234' and isAdmin=1
 
@@ -69,3 +69,7 @@ select top 10 * from TRANSACTIONS order by userNumber desc
 delete from USERS where userNumber=11002
 
 select userNumber, accBalance from ACCOUNTS where accNumber=10000
+
+select sum(accBalance) from ACCOUNTS
+
+select count(*) from ACCOUNTS where accType='Checkings'
