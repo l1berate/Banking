@@ -41,6 +41,7 @@ namespace Banking
                     WriteMenu();
                 }
                 write = true;
+                Console.SetCursorPosition(0, 0);
                 key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.DownArrow)
@@ -74,6 +75,7 @@ namespace Banking
                 }
             } while (menuDone);
 
+            Console.SetCursorPosition(Console.WindowWidth-1, Console.WindowHeight-1);
             Console.ReadKey();
             return menuSelectorIndex;
         }
@@ -90,6 +92,7 @@ namespace Banking
                     WriteInfo(spaces);
                 }
                 write = true;
+                Console.SetCursorPosition(0, 0);
                 key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.DownArrow)
@@ -157,6 +160,7 @@ namespace Banking
                     WriteInfo();
                 }
                 write = true;
+                Console.SetCursorPosition(0, 0);
                 key = Console.ReadKey(true);
                 
                 if (key.Key == ConsoleKey.Enter)
@@ -197,6 +201,7 @@ namespace Banking
                 }
             } while (menuDone);
 
+            Console.SetCursorPosition(0, 0);
             Console.ReadKey();
             return "";
         }
@@ -205,6 +210,7 @@ namespace Banking
             int tabSpaces=12)
         {
             menuTitle = title;
+            Console.CursorVisible = false;
             if (menuTitle.Length > Console.WindowWidth - 28)
             {
                 menuTitle = menuTitle.Substring(0, Console.WindowWidth - (tabSpaces*2));
@@ -258,7 +264,7 @@ namespace Banking
 
         private void WriteMenu()
         {
-            Console.Clear();
+            Console.SetCursorPosition(0, 0);
             if (menuItems.Length > Console.WindowHeight - 11)
             {
                 menuItems = menuItems.Take(Console.WindowHeight - 11).ToArray();
@@ -308,12 +314,13 @@ namespace Banking
 
             Console.Write(String.Concat(" !", string.Concat(Enumerable.Repeat("~", (Console.WindowWidth - 2 - lastBit.Length)))));
             Console.Write(lastBit);
+            
 
         }
 
         private void WriteInfo(int spaceCount=12)
         {
-            Console.Clear();
+            Console.SetCursorPosition(0, 0);
             WriteTitle();
             WriteEmptyLine(4);
 
@@ -366,7 +373,7 @@ namespace Banking
             Console.ForegroundColor = fgc;
             Console.Write(string.Concat(Enumerable.Repeat("~", (Console.WindowWidth / 2) -
                 (menuTitle.Length / 2) - 2)));
-            Console.WriteLine(lastBit);
+            Console.Write(lastBit);
         }
         private void WriteInfoBox(string infoMsg = "")
         {
@@ -385,7 +392,7 @@ namespace Banking
                 Console.Write("+");
                 Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth-(infoMsg.Length + 20 + 
                     lastBit.Length))));
-                Console.WriteLine(lastBit);
+                Console.Write(lastBit);
 
                 Console.Write(" !");
                 Console.Write("            |  ");
@@ -397,7 +404,7 @@ namespace Banking
                 Console.Write("  |");
                 Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - (infoMsg.Length + 20 +
                     lastBit.Length))));
-                Console.WriteLine(lastBit);
+                Console.Write(lastBit);
 
                 Console.Write(" !");
                 Console.Write("            +");
@@ -405,7 +412,7 @@ namespace Banking
                 Console.Write("+");
                 Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - (infoMsg.Length + 20 +
                     lastBit.Length))));
-                Console.WriteLine(lastBit);
+                Console.Write(lastBit);
             }
         }
 
@@ -416,7 +423,7 @@ namespace Banking
                 Console.BackgroundColor = bgc;
                 Console.ForegroundColor = fgc;
                 Console.Write(String.Concat(" !", string.Concat(Enumerable.Repeat(" ", (Console.WindowWidth - 2 - lastBit.Length)))));
-                Console.WriteLine(lastBit);
+                Console.Write(lastBit);
             }
             
         }

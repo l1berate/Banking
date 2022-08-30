@@ -611,7 +611,7 @@ namespace Banking
                         new string[] { $"{reader.GetInt32(0)}",
                                        $"{reader.GetInt32(1)}",
                                        $"{reader.GetString(2)}",
-                                       $"{String.Format("{0:C}", reader.GetDecimal(3))}",
+                                       $"{String.Format("{0:C}", Convert.ToDecimal(reader.GetDecimal(3)))}",
                                        $"{reader.GetString(4)}", };
                     string resultString = "";
                     int i = 0;

@@ -73,3 +73,5 @@ select userNumber, accBalance from ACCOUNTS where accNumber=10000
 select sum(accBalance) from ACCOUNTS
 
 select count(*) from ACCOUNTS where accType='Checkings'
+
+select * FROM USERS order by userNumber desc

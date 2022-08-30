@@ -773,6 +773,8 @@ void exitScreen()
         ConsoleColor.Black,
         ConsoleColor.Gray);
     wrongCreds.ShowInfo();
+    Console.Clear();
+    Environment.Exit(0);
 }
 
 void dbError(Exception e)

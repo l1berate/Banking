@@ -1,0 +1,11 @@
+C:\Users\mrjdw\source\repos\Banking\Releases\Banking.exe
+C:\Users\mrjdw\source\repos\Banking\Releases\Banking.dll
+C:\Users\mrjdw\source\repos\Banking\Releases\Banking.deps.json
+C:\Users\mrjdw\source\repos\Banking\Releases\Banking.runtimeconfig.json
+C:\Users\mrjdw\source\repos\Banking\Releases\Banking.pdb
+C:\Users\mrjdw\source\repos\Banking\Releases\System.Data.SqlClient.dll
+C:\Users\mrjdw\source\repos\Banking\Releases\runtimes\win-arm64\native\sni.dll
+C:\Users\mrjdw\source\repos\Banking\Releases\runtimes\win-x64\native\sni.dll
+C:\Users\mrjdw\source\repos\Banking\Releases\runtimes\win-x86\native\sni.dll
+C:\Users\mrjdw\source\repos\Banking\Releases\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\mrjdw\source\repos\Banking\Releases\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
