@@ -148,9 +148,14 @@ namespace Banking
             {
                 infoTxt = "> ";
             }
+            bool write = true;
             do
             {
-                WriteInfo();
+                if (write)
+                {
+                    WriteInfo();
+                }
+                write = true;
                 key = Console.ReadKey(true);
                 
                 if (key.Key == ConsoleKey.Enter)
@@ -186,6 +191,7 @@ namespace Banking
                 }
                 else
                 {
+                    write = false;
                     continue;
                 }
             } while (menuDone);
@@ -232,8 +238,7 @@ namespace Banking
 
             if (menuItems.Length > Console.WindowHeight - 11)
             {
-                maxPages = (int)(menuItems.Length / (Console.WindowHeight - 11));
-                maxPages += (menuItems.Length % (Console.WindowHeight - 11)) != 0 ? 1 : 0;
+                maxPages = (int)((int)menuItems.Length / (int)(Console.WindowHeight - 11));
             }
             bgc = bg;
             fgc = fg;

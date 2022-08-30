@@ -265,7 +265,7 @@ namespace Banking
         }
 
         // search accounts
-        public string[] searchAccounts(string searchMe, int column)
+        public string[] searchAccounts(string searchMe="", int column=0)
         {
             // search USERS where columns[column] like @searchMe
             sqlCon.Open();
@@ -277,9 +277,20 @@ namespace Banking
                 "accEmail",
                 "accPhone",
                 "isAdmin"};
-            SqlCommand cmd = new SqlCommand(
-                $"select * from USERS where {columns[column]} like '%{searchMe}%'", 
+            SqlCommand cmd;
+            if (searchMe == "")
+            {
+                cmd = new SqlCommand(
+                $"select * from USERS",
                 sqlCon);
+            }
+            else
+            {
+                cmd = new SqlCommand(
+                $"select * from USERS where {columns[column]} like '%{searchMe}%'",
+                sqlCon);
+            }
+            
             //cmd.Parameters.AddWithValue("@searchMe", searchMe);
             SqlDataReader reader = cmd.ExecuteReader();
             string[] results = new string[] { "User # |   Account Name    |   Username   |    SSN    |         Email         |Phone Number|Admin",

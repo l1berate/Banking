@@ -458,7 +458,7 @@ void adminMenu()
                 // list accounts
                 try
                 {
-                    string[] accountsFound = db.accountsList();
+                    string[] accountsFound = db.searchAccounts();
                     ConsoleMenu searchResults = new ConsoleMenu("Search Results",
                         accountsFound,
                         "Press Up/Down to look at other pages or any other key to exit.",
