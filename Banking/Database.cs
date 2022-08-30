@@ -187,16 +187,10 @@ namespace Banking
         }
 
         // transfer funds
-<<<<<<< HEAD
-        public void transferFunds(int source, int destination)
-        {
-            // create transaction and update balances
-=======
         public void transferFunds(int source, int destination, double amount)
         {
             // create transaction and update balances
             sqlCon.Open();
->>>>>>> inprogress
 
             // query source account to get user number and balance
             SqlCommand cmd = new SqlCommand(
@@ -270,16 +264,7 @@ namespace Banking
             sqlCon.Close();
         }
 
-        }
-
         // search accounts
-<<<<<<< HEAD
-        public string searchAccounts()
-        {
-            //wrapper for getUserAccountInfo I guess?
-
-            return "";
-=======
         public string[] searchAccounts(string searchMe, int column)
         {
             // search USERS where columns[column] like @searchMe
@@ -351,7 +336,6 @@ namespace Banking
             reader.Close();
             sqlCon.Close();
             return results.Length > 2 ? results : new string[] { "No accounts found." };
->>>>>>> inprogress
         }
 
         // accounts list
@@ -359,9 +343,6 @@ namespace Banking
         {
             //even bigger wrapper for getUserAccountInfo? 
             //sounds like a job for tomorrow
-<<<<<<< HEAD
-
-=======
             sqlCon.Open();
             SqlCommand cmd = new SqlCommand(
                 $"select * from USERS",
@@ -422,22 +403,13 @@ namespace Banking
             sqlCon.Close();
             return results.Length > 1 ? results : new string[] { "No accounts found." };
         }
->>>>>>> inprogress
-
-            return new string[0];
-        }
 
         // summarize accounts
         public string summarizeAccounts()
         {
             //return back the total statements we need to get displayed
-<<<<<<< HEAD
-=======
             sqlCon.Open();
->>>>>>> inprogress
-
-            return "";
-        }
+            // test changes
 
             sqlCon.Close();
             return "";
@@ -448,16 +420,11 @@ namespace Banking
         {
             // yet another wrapper for getUserAccountInfo?? Should be easy at
             // least hopefully, if even needed at all
-<<<<<<< HEAD
-
-
-=======
             sqlCon.Open();
 
 
             sqlCon.Close();
 
->>>>>>> inprogress
             return "";
         }
 
@@ -466,16 +433,11 @@ namespace Banking
         public void withdraw(int sourceAccNo, double transAmount)
         {
             // sql updates to make a transaction, then update the ACCOUNTS table balance
-<<<<<<< HEAD
-
-
-=======
             sqlCon.Open();
 
 
             sqlCon.Close();
 
->>>>>>> inprogress
         }
 
 
@@ -483,16 +445,6 @@ namespace Banking
         public void deposit(int destinationAccNo, double transAmount)
         {
             // same as withdraw just positive instead of negative
-<<<<<<< HEAD
-
-
-        }
-
-        // change password
-        public void changePassword(int usrNo)
-        {
-            // a simple update of the password
-=======
             sqlCon.Open();
 
 
@@ -513,7 +465,6 @@ namespace Banking
             cmd.ExecuteNonQuery();
 
             sqlCon.Close();
->>>>>>> inprogress
         }
 
         // view account last 5 transactions
