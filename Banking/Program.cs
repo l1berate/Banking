@@ -618,17 +618,144 @@ void customerMenu()
                 break;
             case 3:
                 // transfer money
+                try
+                {
+                    string[] accounts = db.getAccTypes();
+                    
+                    ConsoleMenu transferMenu1 = new ConsoleMenu("Transfer Money",
+                    accounts,
+                    "Choose the account you would like to transfer from.",
+                    ConsoleColor.DarkGray,
+                    ConsoleColor.Cyan);
+                    string accChoice = accounts[transferMenu1.ShowMenu()];
+                    int srcAccNo = db.getAccNumber(accChoice);
+                    int destAccNo = 0;
 
+                    if (accounts.Length == 1)
+                    {
+                        // only has Checkings so customer must type in the account number
+                        // to transfer to
+                        ConsoleMenu destinationMenu = new ConsoleMenu("Destination Account",
+                        new string[] { "Please enter in the account number you would like to transfer money to." },
+                        "> ",
+                        ConsoleColor.DarkGray,
+                        ConsoleColor.Cyan);
+                        destAccNo = Convert.ToInt32(destinationMenu.ShowPrompt());
+                    }
+                    else
+                    {
+                        // select what other account to deposit to
+                        // menuItems = menuItems.Concat(new string[] { newitem }).ToArray();
+                        string[] transferOptions = accounts.Concat(new string[] {"Other Account"}).ToArray();
+                        ConsoleMenu transferMenu2 = new ConsoleMenu("Transfer Money",
+                            transferOptions,
+                            "Choose the account you would like to transfer to.",
+                            ConsoleColor.DarkGray,
+                            ConsoleColor.Cyan);
+                        string accChoice2 = transferOptions[transferMenu2.ShowMenu()];
+                        if (accChoice2 != "Other Account")
+                        {
+                            destAccNo = db.getAccNumber(accChoice2);
+                        }
+                        else
+                        {
+                            // get destination account number
+                            ConsoleMenu destinationMenu1 = new ConsoleMenu("Destination Account",
+                                new string[] { "Please enter in the account number you would like to transfer money to." },
+                                "> ",
+                                ConsoleColor.DarkGray,
+                                ConsoleColor.Cyan);
+                            destAccNo = Convert.ToInt32(destinationMenu1.ShowPrompt());
+                        }
+                        
+                    }
+
+                    ConsoleMenu transAmountMenu = new ConsoleMenu("Amount to Transfer",
+                        new string[] { "Please enter in the amount you would like to transfer." },
+                        "> $",
+                        ConsoleColor.DarkGray,
+                        ConsoleColor.Cyan);
+                    double transAmount = Convert.ToDouble(transAmountMenu.ShowPrompt());
+
+                    db.transferFunds(srcAccNo, destAccNo, transAmount);
+
+                    ConsoleMenu transferGood = new ConsoleMenu("Transfer Complete",
+                        new string[] { $"Your transfer of {String.Format("{0:C}", Convert.ToDecimal(transAmount))} to Account # {destAccNo} was successful." },
+                        "Press any key to exit.",
+                        ConsoleColor.Cyan,
+                        ConsoleColor.DarkGray);
+                    transferGood.ShowInfo();
+
+                    continueMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 4:
                 // change password
+                try
+                {
+                    ConsoleMenu newPassMenu = new ConsoleMenu("New Password",
+                    new string[] { "Type in your new password." },
+                    "Password: ",
+                    ConsoleColor.White,
+                    ConsoleColor.Magenta);
+                    string newPassword = newPassMenu.ShowPrompt();
 
+                    db.changePassword(newPassword);
 
+                    ConsoleMenu changeGood = new ConsoleMenu("Password Change Success",
+                        new string[] { "You have successfully changed your password." },
+                        "Press any key to exit.",
+                        ConsoleColor.Magenta,
+                        ConsoleColor.White);
+                    changeGood.ShowInfo();
+                    continueMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
                 break;
             case 5:
                 // view transactions
+                try
+                {
+                    /*
+                    string[] accounts = db.getAccTypes();
+                    string accType = "";
+                    if (accounts.Length > 1)
+                    {
+                        ConsoleMenu transMenu = new ConsoleMenu("Transfer Money",
+                            accounts,
+                            "Choose the account you would like to view the transactions of.",
+                            ConsoleColor.DarkGray,
+                            ConsoleColor.Cyan);
+                        accType = accounts[transMenu.ShowMenu()];
+                    }
+                    else
+                    {
+                        accType = accounts[0];
+                    }*/
 
+                    string[] transactionResults = db.getTransactions();
+
+                    ConsoleMenu transResMenu = new ConsoleMenu("Transactions",
+                        transactionResults,
+                        "Press Up/Down to look at other pages or any other key to exit.",
+                        ConsoleColor.DarkMagenta,
+                        ConsoleColor.Gray);
+                    transResMenu.ShowInfo();
+
+                    continueMenu = true;
+                }
+                catch (Exception ex)
+                {
+                    dbError(ex);
+                }
 
                 break;
             case 6:

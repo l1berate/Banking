@@ -352,8 +352,7 @@ namespace Banking
                         }
                         i++;
                     }
-                    results = results.Concat(new string[] { 
-                        resultString }).ToArray();
+                    results = results.Concat(new string[] { resultString }).ToArray();
                 }
             }
             reader.Close();
@@ -473,6 +472,22 @@ namespace Banking
             sqlCon.Close();
             return returnMe;
         }
+
+        public int getAccNumber(string accType)
+        {
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                "select accNumber from ACCOUNTS where userNumber=@usrNo and accType=@accType", 
+                sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
+            cmd.Parameters.AddWithValue("@accType", accType);
+            int accNo = Convert.ToInt32(cmd.ExecuteScalar());
+
+            sqlCon.Close();
+            return accNo;
+        }
+
+
         // withdraw
         public void withdraw(string accType, double transAmount)
         {
@@ -575,7 +590,71 @@ namespace Banking
 
         // view account last 5 transactions
 
+        public string[] getTransactions()
+        {
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand(
+                "select TRANSACTIONS.transNumber, TRANSACTIONS.accNumber, ACCOUNTS.accType, TRANSACTIONS.transAmount, TRANSACTIONS.transDescription from TRANSACTIONS inner join ACCOUNTS ON TRANSACTIONS.userNumber = ACCOUNTS.userNumber where TRANSACTIONS.userNumber=@usrNo",
+                sqlCon);
+            cmd.Parameters.AddWithValue("@usrNo", usrNo);
 
+
+            string[] results = new string[] { "Transaction # |Account #| Account Type |   Amount   |      Description      ",
+                                              "--------------|---------|--------------|------------|-----------------------"};
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    string[] resultsArray =
+                        new string[] { $"{reader.GetInt32(0)}",
+                                       $"{reader.GetInt32(1)}",
+                                       $"{reader.GetString(2)}",
+                                       $"{String.Format("{0:C}", reader.GetDecimal(3))}",
+                                       $"{reader.GetString(4)}", };
+                    string resultString = "";
+                    int i = 0;
+                    foreach (string res in results[0].Split("|"))
+                    {
+                        if (res.Length < resultsArray[i].Length)
+                        {
+                            resultString += String.Concat(resultsArray[i].Substring(0, res.Length - 2), "..");
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length == resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        if (res.Length > resultsArray[i].Length)
+                        {
+                            resultString += resultsArray[i];
+                            resultString += String.Concat(Enumerable.Repeat(" ", res.Length - resultsArray[i].Length));
+                            if (i < resultsArray.Length - 1)
+                            {
+                                resultString += "|";
+                            }
+                        }
+                        i++;
+                    }
+                    results = results.Concat(new string[] { resultString }).ToArray();
+                }
+                reader.Close();
+            }
+            else
+            {
+                reader.Close();
+            }
+            sqlCon.Close();
+            return results.Length > 2 ? results : new string[] { "No transactions found." };
+        }
 
     }
 }
