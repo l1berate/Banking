@@ -607,11 +607,12 @@ namespace Banking
             {
                 while (reader.Read())
                 {
+                    string amntString = Convert.ToDouble(reader.GetDecimal(3)) >= 0 ? String.Format("{0:C}", reader.GetDecimal(3)) : String.Concat("-", String.Format("{0:C}", -1*Convert.ToDouble(reader.GetDecimal(3))));
                     string[] resultsArray =
                         new string[] { $"{reader.GetInt32(0)}",
                                        $"{reader.GetInt32(1)}",
                                        $"{reader.GetString(2)}",
-                                       $"{String.Format("{0:C}", Convert.ToDecimal(reader.GetDecimal(3)))}",
+                                       $"{amntString}",
                                        $"{reader.GetString(4)}", };
                     string resultString = "";
                     int i = 0;

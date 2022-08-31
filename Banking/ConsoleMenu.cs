@@ -160,9 +160,12 @@ namespace Banking
                     WriteInfo();
                 }
                 write = true;
-                Console.SetCursorPosition(0, 0);
+
+                Console.CursorVisible = true;
+                Console.SetCursorPosition(17+infoTxt.Length, Console.WindowHeight-4);
                 key = Console.ReadKey(true);
-                
+                Console.CursorVisible = false;
+
                 if (key.Key == ConsoleKey.Enter)
                 {
                     if (input != "")
@@ -388,9 +391,9 @@ namespace Banking
                 Console.ForegroundColor = fgc;
                 Console.Write(" !");
                 Console.Write("            +");
-                Console.Write(String.Concat(Enumerable.Repeat("-", infoMsg.Length+4)));
+                Console.Write(String.Concat(Enumerable.Repeat("-", infoMsg.Length+5)));
                 Console.Write("+");
-                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth-(infoMsg.Length + 20 + 
+                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth-(infoMsg.Length + 21 + 
                     lastBit.Length))));
                 Console.Write(lastBit);
 
@@ -398,19 +401,19 @@ namespace Banking
                 Console.Write("            |  ");
                 Console.BackgroundColor = specialbg;
                 Console.ForegroundColor = specialfg;
-                Console.Write(infoMsg);
+                Console.Write(infoMsg + " ");
                 Console.BackgroundColor = bgc;
                 Console.ForegroundColor = fgc;
                 Console.Write("  |");
-                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - (infoMsg.Length + 20 +
+                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - (infoMsg.Length + 21 +
                     lastBit.Length))));
                 Console.Write(lastBit);
 
                 Console.Write(" !");
                 Console.Write("            +");
-                Console.Write(String.Concat(Enumerable.Repeat("-", infoMsg.Length + 4)));
+                Console.Write(String.Concat(Enumerable.Repeat("-", infoMsg.Length + 5)));
                 Console.Write("+");
-                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - (infoMsg.Length + 20 +
+                Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - (infoMsg.Length + 21 +
                     lastBit.Length))));
                 Console.Write(lastBit);
             }
