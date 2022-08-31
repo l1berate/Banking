@@ -480,7 +480,7 @@ void adminMenu()
                 try
                 {
                     string[] summaries = db.summarizeAccounts().Split("|");
-                    ConsoleMenu summaryMenu = new ConsoleMenu("",
+                    ConsoleMenu summaryMenu = new ConsoleMenu("Account Summary",
                         new string[] { $"Total Accounts: {summaries[0]}",
                                        $"Total Balances: {summaries[1]}",
                                        $"Checkings Accounts: {summaries[2]}",
@@ -724,23 +724,6 @@ void customerMenu()
                 // view transactions
                 try
                 {
-                    /*
-                    string[] accounts = db.getAccTypes();
-                    string accType = "";
-                    if (accounts.Length > 1)
-                    {
-                        ConsoleMenu transMenu = new ConsoleMenu("Transfer Money",
-                            accounts,
-                            "Choose the account you would like to view the transactions of.",
-                            ConsoleColor.DarkGray,
-                            ConsoleColor.Cyan);
-                        accType = accounts[transMenu.ShowMenu()];
-                    }
-                    else
-                    {
-                        accType = accounts[0];
-                    }*/
-
                     string[] transactionResults = db.getTransactions();
 
                     ConsoleMenu transResMenu = new ConsoleMenu("Transactions",
